@@ -1,0 +1,22 @@
+#!/usr/bin/env python2
+
+import MySQLdb
+try:
+   db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
+   db.autocommit(True)
+
+except Exception, e:
+   print('*** Failed to connect to database ({})***'.format(e))
+   exit()
+
+cursor = db.cursor(MySQLdb.cursors.DictCursor)
+
+# Find users
+cursor.execute("select * from users")
+rows = cursor.fetchall()
+
+for row in rows:
+    print row
+
+db.close()
+
