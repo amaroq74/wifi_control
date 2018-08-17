@@ -1,0 +1,41 @@
+{% extends "home_base.html" %}
+{% block title %}User log For {{ curr_date }}{% endblock %}
+{% block body %}
+
+<table width=90%>
+    <tr><td align=center colspan=5><h1>User Log For {{ curr_date }}</h1></td></tr>
+<tr>
+    <th width=50 align=left>Timestamp</th>
+    <th width=50 align=left>User</th>
+    <th width=50 align=left>SSID</th>
+    <th width=50 align=left>MAC</th>
+    <th width=50 align=left>Access Point</th>
+</tr>
+<tr>
+   <td colspan=5><hr></td>
+</tr>
+<tr>
+    <form action="" method=post>
+    <td align=left>{{ form.day }}</td>
+    <td align=left>{{ form.user(size=10) }}</td>
+    <td align=left>{{ form.ssid(size=10) }}</td>
+    <td align=left>{{ form.mac(size=10) }}</td>
+    <td align=left>{{ form.ap(size=10) }} Page: {{ form.page }} {{form.update }}</td>
+    </form>
+</tr>
+<tr>
+   <td colspan=5><hr></td>
+</tr>
+
+{% for item in items %}
+   <tr>
+      <td><font size=-1>{{ item['timestamp'] }}</font></td>
+      <td><font size=-1>{{ item['user'] }}</font></td>
+      <td><font size=-1>{{ item['ssid'] }}</font></td>
+      <td><font size=-1>{{ item['mac'] }}</font></td>
+      <td><font size=-1>{{ item['ap'] }}</font></td>
+   </tr>
+{% endfor %}
+</table>
+{% endblock %}
+
