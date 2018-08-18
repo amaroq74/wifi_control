@@ -46,7 +46,7 @@ def print_users():
             ent['add'].ssid.data = ssid
             ent['add'].enable.data = 1
 
-            cursor.execute("select id, user, ssid, password, notes, enable from users where ssid = '{}'".format(ssid))
+            cursor.execute("select id, user, ssid, password, notes, enable from users where ssid = '{}' order by user".format(ssid))
             rows = cursor.fetchall()
 
             for row in rows:
@@ -81,7 +81,7 @@ def add_user():
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,password,notes,enable))
+        cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,password,MySQLdb.escape_string(notes),enable))
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
@@ -105,7 +105,7 @@ def edit_user():
         query = "delete from users where id = '{}'".format(idx)
 
     else:
-        query = "update users set password = '{}', notes = '{}', enable = '{}' where id = '{}'".format(password,notes,enable,idx)
+        query = "update users set password = '{}', notes = '{}', enable = '{}' where id = '{}'".format(password,MySQLdb.escape_string(notes),enable,idx)
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
