@@ -2,49 +2,48 @@
 {% block title %}User Edit{% endblock %}
 {% block body %}
 <center>
-<h1>User Edit</h1>
+<h1>User List</h1>
 </center>
 
 <table width=90%>
-   {% for ssid in ssids %}
+   {% for grp in ssids %}
       <tr>
          <td colspan=6 align=center>&nbsp </td>
       </tr>
       <tr>
-         <td colspan=6 align=center><h3>{{ ssid['name'] }}</h3></td>
+         <td colspan=6 align=center><h3>SSID: {{ grp['name'] }}</h3></td>
       </tr>
       <tr>
-          <th width=40 align=left>En</th>
-          <th width=40 align=left>User</th>
-          <th width=40 align=left>SSID</th>
-          <th width=40 align=left>Password</th>
-          <th width=40 align=left>Notes</th>
-          <th width=40 align=left>Delete</th>
+          <th align=left>En</th>
+          <th align=left>User</th>
+          <th align=left>Password</th>
+          <th align=left>Notes</th>
+          <th align=left>Delete</th>
+          <th align=left>&nbsp</th>
       </tr>
       <tr>
          <td colspan=6><hr></td>
       </tr>
-      {% for form in ssid['forms'] %}
+      {% for form in grp['forms'] %}
          <tr>
             <form action="{{ url_for('.edit_user') }}" method=post>
             <td>{{ form.idx }}{{ form.enable }}</td>
-            <td>{{ form.user      }}</td>
-            <td>{{ form.ssid      }}</td>
+            <td>{{ form.user      }}{{ form.user.data }}</td>
             <td>{{ form.password  }}</td>
-            <td>{{ form.notes     }}</td>
-            <td>{{ form.delete }}{{ form.update }}</td>
+            <td>{{ form.notes(size=60) }}</td>
+            <td>{{ form.delete }}{{ form.ssid }} </td>
+            <td>{{ form.update }} </td>
             </form>
          </tr>
       {% endfor %}
       <tr>
-         {% form = ssid['add'] %}
          <form action="{{ url_for('.add_user') }}" method=post>
-            <td>{{ form.enable }}</td>
-            <td>{{ form.user      }}</td>
-            <td>{{ form.ssid      }}</td>
-            <td>{{ form.password  }}</td>
-            <td>{{ form.notes     }}</td>
-            <td>{{ form.add       }}</td>
+            <td>{{ grp['add'].ssid }}{{ grp['add'].enable }}</td>
+            <td>{{ grp['add'].user      }}</td>
+            <td>{{ grp['add'].password  }}</td>
+            <td>{{ grp['add'].notes(size=60) }}</td>
+            <td>{{ grp['add'].ssid      }}</td>
+            <td>{{ grp['add'].add       }}</td>
          </form>
       </tr>
   {% endfor %}

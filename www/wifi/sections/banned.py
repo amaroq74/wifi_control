@@ -3,11 +3,12 @@
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, Blueprint, current_app
-from wtforms import Form, TextField, validators, SubmitField, SelectField, \
+from wtforms import Form, StringField, validators, SubmitField, SelectField, \
      BooleanField, FieldList, FormField, HiddenField
 
 # Add relative path
 import sys,os
+import MySQLdb
 
 SsidList = ['parish_staff', 'parish_user', 'parish_guest']
 
@@ -20,62 +21,69 @@ class BanDelForm(Form):
     delete   = SubmitField("delete")
 
 class BanAddForm(Form):
-    mac      = TextField('mac',[validators.Length(min=0,max=20)])
-    ssid     = TextField('ssid',[validators.Length(min=0,max=20)])
+    mac      = StringField('mac',[validators.Length(min=0,max=20)])
+    ssid     = HiddenField('ssid')
     add      = SubmitField("add")
 
-@control_pages.route('/', methods=['GET'])
+@banned_pages.route('/', methods=['GET'])
 def print_banned():
-    ssids = {}
-
-    for ssid in SsidList:
-        ssids[ssid] = {'add' : BanAddForm(), 'items' : [], 'name' : ssid}
-        ssids[ssid]['add'].aform.data = ssid
+    ssids = []
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
+        for ssid in SsidList:
+            ent = {'add' : BanAddForm(), 'forms' : [], 'name' : ssid}
+            ent['add'].ssid.data = ssid
+
+            cursor.execute("select id, mac, ssid from banned where ssid = '{}'".format(ssid))
+            rows = cursor.fetchall()
+
+            for row in rows:
+                ent['forms'].append(BanDelForm( idx  = row['id'],
+                                                mac  = row['mac'],
+                                                ssid = row['ssid']))
+
+            ssids.append(ent)
+
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
-        return render_template('banned.html', ssids=ssids)
-
-    for ssid in SsidList:
-        cursor.execute("select mac, ssid from banned where 'ssid' = '{}'".format(ssid))
-        ssids[ssid]['items'] = cursor.fetchall()
+        return render_template('error.html', error=str(e))
 
     return render_template('banned.html', ssids=ssids)
 
-@control_pages.route('/add', methods=['POST','GET'])
-def add_user():
+@banned_pages.route('/add', methods=['POST','GET'])
+def add_banned():
 
-    aform = BanAddForm(request.form)
+    aForm = BanAddForm(request.form)
 
     if request.method == 'POST':
-        mac      = aform.mac.data
-        ssid     = aform.ssid.data
+        mac  = aForm.mac.data
+        ssid = aForm.ssid.data
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("insert into `banned` (`mac`, `ssid`) VALUES ('{}', '{}')".format(mac,ssid))
+        cursor.execute("insert into banned (mac, ssid) VALUES ('{}', '{}')".format(mac,ssid))
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
+        return render_template('error.html', error=str(e))
 
     return redirect(url_for('.print_banned'))
 
-@control_pages.route('/del', methods=['POST','GET'])
-def del_user():
+@banned_pages.route('/del', methods=['POST','GET'])
+def del_banned():
 
-    pForm = UserDelForm(request.form)
-    idx      = aform.idx.data
-    mac      = aform.user.data
-    ssid     = aform.ssid.data
+    pForm = BanDelForm(request.form)
+    idx  = pForm.idx.data
+    mac  = pForm.mac.data
+    ssid = pForm.ssid.data
 
-    query = "delete from 'banned' where 'idx' = '{}'".format(idx)
+    query = "delete from banned where id = '{}'".format(idx)
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
@@ -85,6 +93,7 @@ def del_user():
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
+        return render_template('error.html', error=str(e))
 
     return redirect(url_for('.print_banned'))
 

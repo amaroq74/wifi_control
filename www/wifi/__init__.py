@@ -4,7 +4,7 @@
 from flask import Flask, url_for, request, redirect, render_template, session
 from wtforms import Form, TextField, SubmitField, validators
 
-from sections.users   import users_pages
+from sections.users   import user_pages
 from sections.banned  import banned_pages
 from sections.log     import log_pages
 
@@ -16,7 +16,7 @@ DEBUG = True
 # Create application
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.register_blueprint(users_pages)
+app.register_blueprint(user_pages)
 app.register_blueprint(banned_pages)
 app.register_blueprint(log_pages)
 app.secret_key = 'F77skFLsjkdsf\\][][)()0#$?KT'

@@ -2,40 +2,36 @@
 {% block title %}Banned Edit{% endblock %}
 {% block body %}
 <center>
-<h1>Banned Edit</h1>
+<h1>Banned List</h1>
 </center>
 
 <table width=90%>
    {% for ssid in ssids %}
       <tr>
-         <td colspan=3 align=center>&nbsp </td>
+         <td colspan=2 align=center>&nbsp </td>
       </tr>
       <tr>
-         <td colspan=3 align=center><h3>{{ ssid['name'] }}</h3></td>
+         <td colspan=2 align=center><h3>{{ ssid['name'] }}</h3></td>
       </tr>
       <tr>
-          <th width=40 align=left>Mac</th>
-          <th width=40 align=left>SSID</th>
-          <th width=40 align=left>Delete</th>
+          <th align=left>Mac</th>
+          <th align=left>Delete</th>
       </tr>
       <tr>
-         <td colspan=3><hr></td>
+         <td colspan=2><hr></td>
       </tr>
       {% for form in ssid['forms'] %}
          <tr>
             <form action="{{ url_for('.del_banned') }}" method=post>
-            <td>{{ form.idx }}{{ form.mac }}</td>
-            <td>{{ form.ssid   }}</td>
+            <td>{{ form.idx }}{{ form.mac }}{{ form.ssid }}{{ form.mac.data }}</td>
             <td>{{ form.delete }}</td>
             </form>
          </tr>
       {% endfor %}
       <tr>
-         {% form = ssid['add'] %}
-         <form action="{{ url_for('.add_user') }}" method=post>
-            <td>{{ form.mac       }}</td>
-            <td>{{ form.ssid      }}</td>
-            <td>{{ form.add       }}</td>
+         <form action="{{ url_for('.add_banned') }}" method=post>
+            <td>{{ ssid['add'].mac }}{{ ssid['add'].ssid }}</td>
+            <td>{{ ssid['add'].add       }}</td>
          </form>
       </tr>
   {% endfor %}

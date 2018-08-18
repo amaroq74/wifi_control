@@ -3,11 +3,12 @@
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, Blueprint, current_app
-from wtforms import Form, TextField, validators, SubmitField, SelectField, \
+from wtforms import Form, StringField, validators, SubmitField, SelectField, \
      BooleanField, FieldList, FormField, HiddenField
 
 # Add relative path
 import sys,os
+import MySQLdb
 
 SsidList = ['parish_staff', 'parish_user', 'parish_guest']
 
@@ -17,82 +18,94 @@ class UserForm(Form):
     idx      = HiddenField('idx')
     user     = HiddenField('user')
     ssid     = HiddenField('ssid')
-    password = TextField('password',[validators.Length(min=0,max=20)])
-    notes    = TextField('notes',[validators.Length(min=0,max=100)])
+    password = StringField('password', [validators.Length(min=0,max=50)])
+    notes    = StringField('notes',[validators.Length(min=0,max=100)])
     enable   = BooleanField('enable')
     delete   = BooleanField('delete')
     update   = SubmitField("update")
 
 class UserAddForm(Form):
-    user     = TextField('user',[validators.Length(min=0,max=20)])
+    user     = StringField('user',[validators.Length(min=0,max=50)])
     ssid     = HiddenField('ssid')
-    password = TextField('password',[validators.Length(min=0,max=20)])
-    notes    = TextField('notes',[validators.Length(min=0,max=100)])
+    password = StringField('password',[validators.Length(min=0,max=50)])
+    notes    = StringField('notes',[validators.Length(min=0,max=100)])
     enable   = BooleanField('enable')
     add      = SubmitField("add")
 
-@control_pages.route('/', methods=['GET'])
+@user_pages.route('/', methods=['GET'])
 def print_users():
-    ssids = {}
-
-    for ssid in SsidList:
-        ssids[ssid] = {'add' : ScheduleAddForm(), 'items' : [], 'name' : ssid}
-        ssids[ssid]['add'].aform.data = ssid
+    ssids = []
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
+        for ssid in SsidList:
+            ent = {'add' : UserAddForm(), 'forms' : [], 'name' : ssid}
+            ent['add'].ssid.data = ssid
+            ent['add'].enable.data = 1
+
+            cursor.execute("select id, user, ssid, password, notes, enable from users where ssid = '{}'".format(ssid))
+            rows = cursor.fetchall()
+
+            for row in rows:
+                ent['forms'].append(UserForm( idx      = row['id'],
+                                              user     = row['user'],
+                                              ssid     = row['ssid'],
+                                              password = row['password'],
+                                              notes    = row['notes'],
+                                              enable   = row['enable']))
+
+            ssids.append(ent)
+
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
-        return render_template('users.html', ssids=ssids)
-
-    for ssid in SsidList:
-        cursor.execute("select user, ssid, passsword, notes, enable from users where 'ssid' = '{}'".format(ssid))
-        ssids[ssid]['items'] = cursor.fetchall()
+        return render_template('error.html', error=str(e))
 
     return render_template('users.html', ssids=ssids)
 
-@control_pages.route('/add', methods=['POST','GET'])
+@user_pages.route('/add', methods=['POST','GET'])
 def add_user():
 
-    aform = UserAddForm(request.form)
+    aForm = UserAddForm(request.form)
 
     if request.method == 'POST':
-        user     = aform.user.data
-        ssid     = aform.ssid.data
-        password = aform.password.data
-        notes    = aform.notes.data
-        enable   = aform.enable.data
+        user     = aForm.user.data
+        ssid     = aForm.ssid.data
+        password = aForm.password.data
+        notes    = aForm.notes.data
+        enable   = 1 if aForm.enable.data else 0
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("insert into `users` (`user`, `ssid`, `password`, 'notes', 'enable') VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,password,notes,enable))
+        cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,password,notes,enable))
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
+        return render_template('error.html', error=str(e))
 
-    return redirect(url_for('.print_user'))
+    return redirect(url_for('.print_users'))
 
-@control_pages.route('/edit', methods=['POST','GET'])
+@user_pages.route('/edit', methods=['POST','GET'])
 def edit_user():
 
     pForm = UserForm(request.form)
-    user     = aform.user.data
-    ssid     = aform.ssid.data
-    password = aform.password.data
-    notes    = aform.notes.data
-    enable   = aform.enable.data
-    delete   = aform.delete.data
+    user     = pForm.user.data
+    ssid     = pForm.ssid.data
+    password = pForm.password.data
+    notes    = pForm.notes.data
+    enable   = 1 if pForm.enable.data else 0
+    delete   = pForm.delete.data
+    idx      = pForm.idx.data
 
-    if postForm.delete.data:
-        query = "delete from 'users' where 'user' = '{}'".format(user)
+    if delete:
+        query = "delete from users where id = '{}'".format(idx)
 
     else:
-        query = "update 'users' set 'password' = '{}', 'notes' = '{}', 'enable' = '{}' where 'user' = '{}'".format(password,notes,enable,user)
+        query = "update users set password = '{}', notes = '{}', enable = '{}' where id = '{}'".format(password,notes,enable,idx)
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
@@ -102,6 +115,7 @@ def edit_user():
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
+        return render_template('error.html', error=str(e))
 
     return redirect(url_for('.print_users'))
 
