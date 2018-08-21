@@ -11,8 +11,11 @@ except Exception, e:
 
 cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
+user = 'ryan_staff'
+
 # Find users
-cursor.execute("select * from users")
+#cursor.execute("select * from users")
+cursor.execute("select password,ssid,enable from users where user='{}'".format(user))
 rows = cursor.fetchall()
 
 for row in rows:

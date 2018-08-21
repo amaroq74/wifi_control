@@ -50,9 +50,11 @@ def authorize(p):
     cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
     # Lookup user
-    user  = d['User-Name']
+    user  = d['User-Name'].strip('"')
 
     # Find user
+    query = "select password,ssid,enable from users where user='{}'".format(user)
+    print('*** Query: {} ***'.format(query))
     cursor.execute("select password,ssid,enable from users where user='{}'".format(user))
     row = cursor.fetchone()
 
@@ -85,7 +87,7 @@ def authorize(p):
         return (RLM_MODULE_OK, reply, config)
 
     # Format SSID
-    raw_ssid = d['Called-Station-Id'].split(':')[1]
+    raw_ssid = d['Called-Station-Id'].strip('"').split(':')[1]
 
     # Drop suffix
     if raw_ssid.endswith('_5G'):
@@ -100,7 +102,7 @@ def authorize(p):
         return RLM_MODULE_REJECT
 
     # Check if mac is banned
-    mac = d['Calling-Station-Id']
+    mac = d['Calling-Station-Id'].strip('"')
     cursor.execute("select id from banned where mac='{}' and ssid='{}'".format(mac,ssid))
     if cursor.fetchone() is not None:
         print('*** mac is banned ***')
@@ -108,12 +110,12 @@ def authorize(p):
         return RLM_MODULE_REJECT
 
     # Lookup access point name
-    ap_mac = d['Called-Station-Id'].split(':')[0]
+    ap_mac = d['Called-Station-Id'].strip('"').split(':')[0]
     if ap_mac in ApAlias:
        ap_mac = ApAlias[ap_mac]
 
     # Log entry
-    cursor.execute("insert into `user_log` (`user`, `ssid`, `mac`, 'ap') VALUES ('{}', '{}', '{}', '{}')".format(user,ssid,mac,ap_mac))
+    cursor.execute("insert into user_log (user, ssid, mac, ap) VALUES ('{}', '{}', '{}', '{}')".format(user,ssid,mac,ap_mac))
     db.close()
 
     return (RLM_MODULE_OK, reply, config)
