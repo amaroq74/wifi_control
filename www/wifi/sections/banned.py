@@ -63,7 +63,7 @@ def add_banned():
     aForm = BanAddForm(request.form)
 
     if request.method == 'POST':
-        mac   = aForm.mac.data
+        mac   = aForm.mac.data.lower()
         ssid  = aForm.ssid.data
         notes = aForm.notes.data
 

@@ -22,12 +22,12 @@ L_PROXY = 5
 L_CONS = 128
 
 ApAlias = {
-   'b0:4e:26:af:53:5e' : 'gym1',
-   'ac:84:c6:08:d1:7c' : 'homer1',
-   'ac:84:c6:08:d6:4a' : 'pcenter1',
-   'ac:84:c6:08:e6:f8' : 'pcenter2',
-   'ac:84:c6:08:df:6a' : 'church1',
-   'ac:84:c6:08:e2:e4' : 'rectory1',
+   '4e-26-af-53' : 'gym1',
+   '84-c6-08-d1' : 'homer1',
+   '84-c6-08-d6' : 'pcenter1',
+   '84-c6-08-e6' : 'pcenter2',
+   '84-c6-08-df' : 'church1',
+   '84-c6-08-e2' : 'rectory1'
 }
 
 def instantiate(p):
@@ -53,8 +53,6 @@ def authorize(p):
     user  = d['User-Name'].strip('"')
 
     # Find user
-    query = "select password,ssid,enable from users where user='{}'".format(user)
-    print('*** Query: {} ***'.format(query))
     cursor.execute("select password,ssid,enable from users where user='{}'".format(user))
     row = cursor.fetchone()
 
@@ -102,7 +100,7 @@ def authorize(p):
         return RLM_MODULE_REJECT
 
     # Check if mac is banned
-    mac = d['Calling-Station-Id'].strip('"')
+    mac = d['Calling-Station-Id'].strip('"').lower()
     cursor.execute("select id from banned where mac='{}' and ssid='{}'".format(mac,ssid))
     if cursor.fetchone() is not None:
         print('*** mac is banned ***')
@@ -110,12 +108,14 @@ def authorize(p):
         return RLM_MODULE_REJECT
 
     # Lookup access point name
-    ap_mac = d['Called-Station-Id'].strip('"').split(':')[0]
-    if ap_mac in ApAlias:
-       ap_mac = ApAlias[ap_mac]
+    ap_mac = d['Called-Station-Id'].strip('"').split(':')[0].lower()
+    ap_short = ap_mac[3:-3]
+
+    if ap_short in ApAlias:
+       ap_mac = ApAlias[ap_short]
 
     # Log entry
-    cursor.execute("insert into user_log (user, ssid, mac, ap) VALUES ('{}', '{}', '{}', '{}')".format(user,ssid,mac,ap_mac))
+    cursor.execute("insert into user_log (user, ssid, mac, ap) VALUES ('{}', '{}', '{}', '{}')".format(user,raw_ssid,mac,ap_mac))
     db.close()
 
     return (RLM_MODULE_OK, reply, config)

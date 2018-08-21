@@ -18,7 +18,7 @@ class UserForm(Form):
     idx      = HiddenField('idx')
     user     = HiddenField('user')
     ssid     = HiddenField('ssid')
-    password = StringField('password', [validators.Length(min=0,max=50)])
+    pword    = StringField('pword', [validators.Length(min=0,max=50)])
     notes    = StringField('notes',[validators.Length(min=0,max=100)])
     enable   = BooleanField('enable')
     delete   = BooleanField('delete')
@@ -27,7 +27,7 @@ class UserForm(Form):
 class UserAddForm(Form):
     user     = StringField('user',[validators.Length(min=0,max=50)])
     ssid     = HiddenField('ssid')
-    password = StringField('password',[validators.Length(min=0,max=50)])
+    pword    = StringField('pword',[validators.Length(min=0,max=50)])
     notes    = StringField('notes',[validators.Length(min=0,max=100)])
     enable   = BooleanField('enable')
     add      = SubmitField("add")
@@ -53,7 +53,7 @@ def print_users():
                 ent['forms'].append(UserForm( idx      = row['id'],
                                               user     = row['user'],
                                               ssid     = row['ssid'],
-                                              password = row['password'],
+                                              pword    = row['password'],
                                               notes    = row['notes'],
                                               enable   = row['enable']))
 
@@ -73,7 +73,7 @@ def add_user():
     if request.method == 'POST':
         user     = aForm.user.data
         ssid     = aForm.ssid.data
-        password = aForm.password.data
+        pword    = aForm.pword.data
         notes    = aForm.notes.data
         enable   = 1 if aForm.enable.data else 0
 
@@ -81,7 +81,7 @@ def add_user():
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,password,MySQLdb.escape_string(notes),enable))
+        cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,pword,MySQLdb.escape_string(notes),enable))
 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
@@ -95,7 +95,7 @@ def edit_user():
     pForm = UserForm(request.form)
     user     = pForm.user.data
     ssid     = pForm.ssid.data
-    password = pForm.password.data
+    pword    = pForm.pword.data
     notes    = pForm.notes.data
     enable   = 1 if pForm.enable.data else 0
     delete   = pForm.delete.data
@@ -105,7 +105,7 @@ def edit_user():
         query = "delete from users where id = '{}'".format(idx)
 
     else:
-        query = "update users set password = '{}', notes = '{}', enable = '{}' where id = '{}'".format(password,MySQLdb.escape_string(notes),enable,idx)
+        query = "update users set password = '{}', notes = '{}', enable = '{}' where id = '{}'".format(pword,MySQLdb.escape_string(notes),enable,idx)
 
     try:
         db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')

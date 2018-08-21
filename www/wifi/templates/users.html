@@ -28,8 +28,8 @@
          <tr>
             <form action="{{ url_for('.edit_user') }}" method=post>
             <td>{{ form.idx }}{{ form.enable }}</td>
-            <td>{{ form.user      }}{{ form.user.data }}</td>
-            <td>{{ form.password  }}</td>
+            <td>{{ form.user   }}{{ form.user.data }}</td>
+            <td>{{ form.pword  }}</td>
             <td>{{ form.notes(size=60) }}</td>
             <td>{{ form.delete }}{{ form.ssid }} </td>
             <td>{{ form.update }} </td>
@@ -39,8 +39,8 @@
       <tr>
          <form action="{{ url_for('.add_user') }}" method=post>
             <td>{{ grp['add'].ssid }}{{ grp['add'].enable }}</td>
-            <td>{{ grp['add'].user      }}</td>
-            <td>{{ grp['add'].password  }}</td>
+            <td>{{ grp['add'].user   }}</td>
+            <td>{{ grp['add'].pword  }}</td>
             <td>{{ grp['add'].notes(size=60) }}</td>
             <td>{{ grp['add'].ssid      }}</td>
             <td>{{ grp['add'].add       }}</td>
