@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 import MySQLdb
+import time
 
 RLM_MODULE_REJECT = 0
 RLM_MODULE_FAIL = 1
@@ -29,6 +30,12 @@ ApAlias = {
    '84-c6-08-df' : 'church1',
    '84-c6-08-e2' : 'rectory1'
 }
+
+lastLog = { 'time' : time.time(),
+            'user' : None,
+            'mac'  : None,
+            'ssid' : None,
+            'ap'   : None }
 
 def instantiate(p):
     return 0
@@ -65,7 +72,7 @@ def authorize(p):
     # User is disabled
     elif row['enable'] != 1:
         db.close()
-        print('*** User {} is disaled ***'.format(user))
+        print('*** User {} is disabled ***'.format(user))
         return RLM_MODULE_REJECT
 
     # Entry found
@@ -87,7 +94,7 @@ def authorize(p):
     # Format SSID
     raw_ssid = d['Called-Station-Id'].strip('"').split(':')[1]
 
-    # Drop suffix
+    # Drop ssid suffix
     if raw_ssid.endswith('_5G'):
         req_ssid = raw_ssid[:-len('_5G')]
     else:
@@ -107,16 +114,25 @@ def authorize(p):
         db.close()
         return RLM_MODULE_REJECT
 
-    # Lookup access point name
+    # Lookup access point, first and last bytes seem to be dynamic in AP
     ap_mac = d['Called-Station-Id'].strip('"').split(':')[0].lower()
     ap_short = ap_mac[3:-3]
 
+    # Look for AP alias
     if ap_short in ApAlias:
-       ap_mac = ApAlias[ap_short]
+        ap_mac = ApAlias[ap_short]
 
-    # Log entry
-    cursor.execute("insert into user_log (user, ssid, mac, ap) VALUES ('{}', '{}', '{}', '{}')".format(user,raw_ssid,mac,ap_mac))
+    # Filter duplicate log entries
+    if (time.time() - lastLog['time']) > 300.0 or lastLog['user'] != user or lastLog['mac'] != mac or lastLog['ssid'] != raw_ssid or lastLog['ap'] != ap_mac:
+        lastLog['time'] = time.time()
+        lastLog['user'] = user 
+        lastLog['mac']  = mac 
+        lastLog['ssid'] = raw_ssid
+        lastLog['ap']   = ap_mac
+
+        # Log entry
+        cursor.execute("insert into user_log (user, ssid, mac, ap) VALUES ('{}', '{}', '{}', '{}')".format(user,raw_ssid,mac,ap_mac))
+
     db.close()
-
     return (RLM_MODULE_OK, reply, config)
 
