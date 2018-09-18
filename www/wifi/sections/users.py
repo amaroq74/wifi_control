@@ -42,6 +42,36 @@ def print_users():
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
         for ssid in SsidList:
+            ent = {'users' : [], 'name' : ssid}
+
+            cursor.execute("select id, user, ssid, password, notes, enable from users where ssid = '{}' order by user".format(ssid))
+            rows = cursor.fetchall()
+
+            for row in rows:
+                ent['users'].append({ 'user'   : row['user'],
+                                      'ssid'   : row['ssid'],
+                                      'pword'  : row['password'],
+                                      'notes'  : row['notes'],
+                                      'enable' : row['enable'] })
+
+            ssids.append(ent)
+
+    except Exception, e:
+        print('*** Failed to connect to database ({})***'.format(e))
+        return render_template('error.html', error=str(e))
+
+    return render_template('users.html', ssids=ssids)
+
+@user_pages.route('/edit', methods=['GET'])
+def edit_users():
+    ssids = []
+
+    try:
+        db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
+        db.autocommit(True)
+        cursor = db.cursor(MySQLdb.cursors.DictCursor)
+
+        for ssid in SsidList:
             ent = {'add' : UserAddForm(), 'forms' : [], 'name' : ssid}
             ent['add'].ssid.data = ssid
             ent['add'].enable.data = 1
@@ -63,7 +93,7 @@ def print_users():
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
-    return render_template('users.html', ssids=ssids)
+    return render_template('users_edit.html', ssids=ssids)
 
 @user_pages.route('/add', methods=['POST','GET'])
 def add_user():
@@ -89,8 +119,8 @@ def add_user():
 
     return redirect(url_for('.print_users'))
 
-@user_pages.route('/edit', methods=['POST','GET'])
-def edit_user():
+@user_pages.route('/update', methods=['POST','GET'])
+def update_user():
 
     pForm = UserForm(request.form)
     user     = pForm.user.data
@@ -117,5 +147,5 @@ def edit_user():
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
-    return redirect(url_for('.print_users'))
+    return redirect(url_for('.edit_users'))
 

@@ -6,36 +6,39 @@
     <tr><td align=center colspan=7><h1>User Log For {{ curr_date }}</h1></td></tr>
 <tr>
     <th align=left>Timestamp</th>
-    <th align=left>User</th>
     <th align=left>SSID</th>
-    <th align=left>MAC</th>
     <th align=left>Access Point</th>
+    <th align=left>User</th>
+    <th align=left>MAC</th>
+    <th align=left>Host</th>
     <th align=left>&nbsp</th>
 </tr>
 <tr>
-   <td colspan=6><hr></td>
+   <td colspan=7><hr></td>
 </tr>
 <tr>
     <form action="" method=post>
     <td align=left>{{ form.day }}</td>
-    <td align=left>{{ form.user(size=10) }}</td>
     <td align=left>{{ form.ssid(size=10) }}</td>
-    <td align=left>{{ form.mac(size=10) }}</td>
     <td align=left>{{ form.ap(size=10) }}</td>
+    <td align=left>{{ form.user(size=10) }}</td>
+    <td align=left>{{ form.mac(size=10) }}</td>
+    <td align=left>{{ form.host(size=10) }}</td>
     <td align=left>Page: {{ form.page }} {{ form.update }}</td>
     </form>
 </tr>
 <tr>
-   <td colspan=6><hr></td>
+   <td colspan=7><hr></td>
 </tr>
 
 {% for item in items %}
    <tr>
       <td><font size=-1>{{ item['timestamp'] }}</font></td>
-      <td><font size=-1>{{ item['user'] }}</font></td>
       <td><font size=-1>{{ item['ssid'] }}</font></td>
-      <td><font size=-1>{{ item['mac'] }}</font></td>
       <td><font size=-1>{{ item['ap'] }}</font></td>
+      <td><font size=-1>{{ item['user'] }}</font></td>
+      <td><font size=-1>{{ item['mac'] }}</font></td>
+      <td><font size=-1>{{ item['host'] }}</font></td>
       <td>&nbsp</th>
    </tr>
 {% endfor %}

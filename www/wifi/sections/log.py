@@ -17,6 +17,7 @@ class LogForm(Form):
     ssid    = TextField('ssid',[validators.Length(min=0,max=20)])
     mac     = TextField('mac',[validators.Length(min=0,max=20)])
     ap      = TextField('ap',[validators.Length(min=0,max=20)])
+    host    = TextField('host',[validators.Length(min=0,max=20)])
 
 @log_pages.route('/', methods=['GET', 'POST'])
 def print_log():
@@ -50,7 +51,17 @@ def print_log():
         cursor.execute("select timestamp, user, ssid, mac, ap from user_log where " + sel + " order by timestamp desc limit %i,%i" % (offset,1000))
 
         items = cursor.fetchall()
-        
+
+        # Get hostnames       
+	for it in items:
+            key = it['mac'].replace('-',':')
+            cursor.execute("select mac, name from hosts where mac='{}'".format(key))
+            res = cursor.fetchone()
+            if res is None:
+                it['host']='Unknown'
+            else:
+                it['host']= res['name']
+ 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
