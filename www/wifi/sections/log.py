@@ -34,7 +34,10 @@ def print_log():
 
         for f in form:
             if isinstance(f,TextField) and len(f.data) > 0:
-                sel += " and %s like '%%%s%%'" % (f.name,f.data)
+                if f.name == 'mac':
+                    sel += " and user_log.mac like '%%%s%%'" % (f.data)
+                else:
+                    sel += " and %s like '%%%s%%'" % (f.name,f.data)
 
         offset = 1000 * (int(form.page.data)-1)
     else:

@@ -28,7 +28,9 @@ def print_hosts():
         pre = " "
         for f in form:
             if isinstance(f,TextField) and len(f.data) > 0:
-                if f.data == "None":
+                if f.name == 'mac':
+                    sel += " and user_log.mac like '%%%s%%'" % (f.data)
+                elif f.data == "None":
                     sel += pre + "%s is NULL" % (f.name)
                 else:
                     sel += pre + "%s like '%%%s%%'" % (f.name,f.data)
