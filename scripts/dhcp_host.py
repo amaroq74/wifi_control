@@ -6,7 +6,7 @@ if len(sys.argv) < 2:
     exit()
 
 cmd = sys.argv[1]
-mac = sys.argv[2]
+mac = sys.argv[2].replace(':','-')
 ip  = sys.argv[3]
 name = "Unknown"
 
@@ -27,9 +27,7 @@ except Exception, e:
 
 cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
-print("cmd={}, mac={}, ip={}, name={}".format(cmd,mac,ip,name))
-
-query = "replace into hosts (mac, ip, name) values ('{}', '{}', '{}')".format(mac,ip,name)
+query = "replace into dhcp_hosts (mac, ip, name, last) values ('{}', '{}', '{}', now())".format(mac,ip,name)
 cursor.execute(query)
 
 db.close()

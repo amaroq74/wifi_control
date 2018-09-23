@@ -1,0 +1,50 @@
+{% extends "wifi_base.html" %}
+{% block title %}Host List{% endblock %}
+{% block body %}
+
+<table width=90%>
+    <tr><td align=center colspan=8><h1>Host List</h1></td></tr>
+<tr>
+    <th align=left>Last DHCP</th>
+    <th align=left>MAC</th>
+    <th align=left>Name</th>
+    <th align=left>Ip</th>
+    <th align=left>User</th>
+    <th align=left>SSID</th>
+    <th align=left>Access Point</th>
+    <th align=left>&nbsp</th>
+</tr>
+<tr>
+   <td colspan=8><hr></td>
+</tr>
+<tr>
+    <form action="" method=post>
+    <td align=left>&nbsp</td>
+    <td align=left>{{ form.mac(size=10) }}</td>
+    <td align=left>{{ form.name(size=10) }}</td>
+    <td align=left>{{ form.ip(size=10) }}</td>
+    <td align=left>{{ form.user(size=10) }}</td>
+    <td align=left>{{ form.ssid(size=10) }}</td>
+    <td align=left>{{ form.ap_name(size=10) }}</td>
+    <td align=left>{{ form.update }}</td>
+    </form>
+</tr>
+<tr>
+   <td colspan=8><hr></td>
+</tr>
+
+{% for item in items %}
+   <tr>
+      <td><font size=-1>{{ item['last'] }}</font></td>
+      <td><font size=-1>{{ item['mac'] }}</font></td>
+      <td><font size=-1>{{ item['name'] }}</font></td>
+      <td><font size=-1>{{ item['ip'] }}</font></td>
+      <td><font size=-1>{{ item['user'] }}</font></td>
+      <td><font size=-1>{{ item['ssid'] }}</font></td>
+      <td><font size=-1>{{ item['ap_name'] }}</font></td>
+      <td>&nbsp</th>
+   </tr>
+{% endfor %}
+</table>
+{% endblock %}
+

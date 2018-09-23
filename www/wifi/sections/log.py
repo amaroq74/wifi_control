@@ -13,11 +13,12 @@ class LogForm(Form):
     day     = SelectField('day',  choices = ['None'], validators=[validators.Required()])
     page    = SelectField('page', choices = [(str(i),str(i)) for i in range(1,101)], validators=[validators.Required()])
     update  = SubmitField("update")
-    user    = TextField('user',[validators.Length(min=0,max=20)])
-    ssid    = TextField('ssid',[validators.Length(min=0,max=20)])
-    mac     = TextField('mac',[validators.Length(min=0,max=20)])
-    ap      = TextField('ap',[validators.Length(min=0,max=20)])
-    host    = TextField('host',[validators.Length(min=0,max=20)])
+    user    = TextField('user_log.user',[validators.Length(min=0,max=20)])
+    ssid    = TextField('user_log.ssid',[validators.Length(min=0,max=20)])
+    mac     = TextField('user_log.mac',[validators.Length(min=0,max=20)])
+    ap_name = TextField('user_log.ap_name',[validators.Length(min=0,max=20)])
+    ap_mac  = TextField('user_log.ap_mac',[validators.Length(min=0,max=20)])
+    name    = TextField('dhcp_hosts.name',[validators.Length(min=0,max=20)])
 
 @log_pages.route('/', methods=['GET', 'POST'])
 def print_log():
@@ -29,7 +30,7 @@ def print_log():
 
     if request.method == 'POST' and form.validate():
         curr_date = form.day.data
-        sel = "timestamp >= '%s 00:00:00' and timestamp <= '%s 23:59:59'" % (form.day.data,form.day.data)
+        sel = "user_log.timestamp >= '%s 00:00:00' and user_log.timestamp <= '%s 23:59:59'" % (form.day.data,form.day.data)
 
         for f in form:
             if isinstance(f,TextField) and len(f.data) > 0:
@@ -38,7 +39,7 @@ def print_log():
         offset = 1000 * (int(form.page.data)-1)
     else:
         curr_date  = time.strftime("%Y-%m-%d",time.localtime())
-        sel    = "timestamp >= current_date()"
+        sel    = "user_log.timestamp >= current_date()"
         offset = 0
 
     items = []
@@ -48,20 +49,14 @@ def print_log():
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
-        cursor.execute("select timestamp, user, ssid, mac, ap from user_log where " + sel + " order by timestamp desc limit %i,%i" % (offset,1000))
+        query =  "select user_log.timestamp, user_log.user, user_log.ssid, user_log.mac, user_log.ap_mac, user_log.ap_name, dhcp_hosts.name "
+        query += "from user_log left join dhcp_hosts on dhcp_hosts.mac = user_log.mac "
+        query += "where " + sel + " order by user_log.timestamp desc limit %i,%i" % (offset,1000)
+
+        cursor.execute(query)
 
         items = cursor.fetchall()
 
-        # Get hostnames       
-	for it in items:
-            key = it['mac'].replace('-',':')
-            cursor.execute("select mac, name from hosts where mac='{}'".format(key))
-            res = cursor.fetchone()
-            if res is None:
-                it['host']='Unknown'
-            else:
-                it['host']= res['name']
- 
     except Exception, e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
