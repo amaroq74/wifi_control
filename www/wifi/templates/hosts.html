@@ -8,6 +8,7 @@
     <th align=left>Last DHCP</th>
     <th align=left>MAC</th>
     <th align=left>Name</th>
+    <th align=left>Interface</th>
     <th align=left>Ip</th>
     <th align=left>User</th>
     <th align=left>SSID</th>
@@ -22,6 +23,7 @@
     <td align=left>&nbsp</td>
     <td align=left>{{ form.mac(size=10) }}</td>
     <td align=left>{{ form.name(size=10) }}</td>
+    <td align=left>{{ form.interface(size=10) }}</td>
     <td align=left>{{ form.ip(size=10) }}</td>
     <td align=left>{{ form.user(size=10) }}</td>
     <td align=left>{{ form.ssid(size=10) }}</td>
@@ -38,6 +40,7 @@
       <td><font size=-1>{{ item['last'] }}</font></td>
       <td><font size=-1>{{ item['mac'] }}</font></td>
       <td><font size=-1>{{ item['name'] }}</font></td>
+      <td><font size=-1>{{ item['interface'] }}</font></td>
       <td><font size=-1>{{ item['ip'] }}</font></td>
       <td><font size=-1>{{ item['user'] }}</font></td>
       <td><font size=-1>{{ item['ssid'] }}</font></td>

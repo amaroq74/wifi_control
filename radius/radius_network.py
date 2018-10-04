@@ -133,15 +133,16 @@ def authorize(p):
     cursor.execute("replace into ap_hosts (mac, ssid, user, ap_name, ap_mac, last) values ('{}', '{}', '{}', '{}', '{}', now())".format(mac,raw_ssid,user,ap_name,ap_mac))
 
     # Filter duplicate log entries
-    if (time.time() - lastLog['time']) > 60.0 or lastLog['user'] != user or lastLog['mac'] != mac or lastLog['ssid'] != raw_ssid or lastLog['ap_mac'] != ap_mac:
-        lastLog['time'] = time.time()
-        lastLog['user']   = user 
-        lastLog['mac']    = mac 
-        lastLog['ssid']   = raw_ssid
-        lastLog['ap_mac'] = ap_mac
+    if (lastLog['user'] == user) and (lastLog['mac'] == mac) and (lastLog['ssid'] == raw_ssid) and (lastLog['ap_mac'] == ap_mac): dup = 1 
+    else: dup = 0
 
-        # Log entry
-        cursor.execute("insert into user_log (user, ssid, mac, ap_mac, ap_name) VALUES ('{}', '{}', '{}', '{}', '{}' )".format(user,raw_ssid,mac,ap_mac,ap_name))
+    lastLog['user']   = user 
+    lastLog['mac']    = mac 
+    lastLog['ssid']   = raw_ssid
+    lastLog['ap_mac'] = ap_mac
+
+    # Log entry
+    cursor.execute("insert into user_log (user, ssid, mac, ap_mac, ap_name, duplicate) VALUES ('{}', '{}', '{}', '{}', '{}', '{}' )".format(user,raw_ssid,mac,ap_mac,ap_name,dup))
 
     db.close()
     return (RLM_MODULE_OK, reply, config)

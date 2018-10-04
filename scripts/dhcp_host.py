@@ -1,20 +1,21 @@
 #!/usr/bin/env python2
 
 import sys
+import os
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 2 or sys.argv[1] == 'del':
     exit()
 
-cmd = sys.argv[1]
-mac = sys.argv[2].replace(':','-')
-ip  = sys.argv[3]
-name = "Unknown"
+mac   = sys.argv[2].replace(':','-')
+ip    = sys.argv[3]
+name  = "Unknown"
+iface = "Unknown"
 
 if len(sys.argv) > 4:
     name = sys.argv[4]
 
-if cmd == 'del':
-    exit()
+if 'DNSMASQ_INTERFACE' in os.environ:
+    iface = os.environ['DNSMASQ_INTERFACE']
 
 import MySQLdb
 try:
@@ -27,7 +28,7 @@ except Exception, e:
 
 cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
-query = "replace into dhcp_hosts (mac, ip, name, last) values ('{}', '{}', '{}', now())".format(mac,ip,name)
+query = "replace into dhcp_hosts (mac, ip, name, interface, last) values ('{}', '{}', '{}', '{}', now())".format(mac,ip,name,iface)
 cursor.execute(query)
 
 db.close()
