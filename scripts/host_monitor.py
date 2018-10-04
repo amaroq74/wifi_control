@@ -5,7 +5,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text      import MIMEText
 
-sender   = 'ryan@pius.org'
+sender   = 'root@pius.org'
 receiver = 'ryan@pius.org'
 
 hosts = [ 'core-sw-pc1',
