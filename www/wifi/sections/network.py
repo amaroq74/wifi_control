@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
 Titles = { 'latency'             : 'Latency',
+           'corr_blocks_15m'     : 'Corrected Blocks',
+           'uncorr_blocks_15m'   : 'Uncorrectable Blocks',
            'cum_sec_errs_15m'    : 'Cumaltive Seconds With Errors',
            'cum_sec_sev_err_15m' : 'Cumulative Seconds With Severe Errors',
            'dsl_unavail_sec_15m' : 'DSL Unavailable Seconds' }
 
 Units  = { 'latency'             : 'mS',
+           'corr_blocks_15m'     : 'Blocks',
+           'uncorr_blocks_15m'   : 'Blocks',
            'cum_sec_errs_15m'    : 'Sec',
            'cum_sec_sev_err_15m' : 'Sec',
            'dsl_unavail_sec_15m' : 'Sec' }
-
 
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -114,6 +117,9 @@ def network(period=None, day=None):
     net.append('/wifi/network/plot/cum_sec_errs_15m')
     net.append('/wifi/network/plot/cum_sec_sev_err_15m')
     net.append('/wifi/network/plot/dsl_unavail_sec_15m')
+    net.append('/wifi/network/plot/corr_blocks_15m')
+    net.append('/wifi/network/plot/uncorr_blocks_15m')
 
     return render_template('network.html', net=net)
+
 
