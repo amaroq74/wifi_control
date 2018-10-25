@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 Titles = { 'latency'             : 'Latency',
-           'corr_blocks_15m'     : 'Corrected Blocks',
-           'uncorr_blocks_15m'   : 'Uncorrectable Blocks',
-           'cum_sec_errs_15m'    : 'Cumaltive Seconds With Errors',
-           'cum_sec_sev_err_15m' : 'Cumulative Seconds With Severe Errors',
-           'dsl_unavail_sec_15m' : 'DSL Unavailable Seconds' }
+           'corr_blocks_15m'     : 'Corrected Blocks (15 Min)',
+           'uncorr_blocks_15m'   : 'Uncorrectable Blocks (15 Min)',
+           'cum_sec_errs_15m'    : 'Cumaltive Seconds With Errors (15 Min)',
+           'cum_sec_sev_err_15m' : 'Cumulative Seconds With Severe Errors (15 Min)',
+           'dsl_unavail_sec_15m' : 'DSL Unavailable Seconds (15 Min)' }
 
 Units  = { 'latency'             : 'mS',
            'corr_blocks_15m'     : 'Blocks',
