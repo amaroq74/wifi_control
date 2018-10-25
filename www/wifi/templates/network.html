@@ -1,12 +1,13 @@
 {% extends "wifi_base.html" %}
-{% block title %}Latency{% endblock %}
+{% block title %}Network Stats{% endblock %}
 {% block body %}
 <p>
 <center>
-<h1>Latency</h1>
+<h1>Network Stats</h1>
 <p>
 {% for plt in net %}
    <img src="{{ plt }}">
+   <p>
 {% endfor %}
 </center>
 {% endblock %}
