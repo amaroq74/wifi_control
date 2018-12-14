@@ -31,10 +31,14 @@ ApAlias = {
    '84-c6-08-d6-4b' : 'pcenter1 5G',
    '84-c6-08-e6-f8' : 'pcenter2',
    '84-c6-08-e6-f9' : 'pcenter2 5G',
+   '80-63-1f-7e-0e' : 'pcenter3',
+   '80-63-1f-7e-0f' : 'pcenter3 5G',
    '84-c6-08-df-6a' : 'church1',
    '84-c6-08-df-6b' : 'church1 5G',
    '84-c6-08-e2-e4' : 'rectory1',
-   '84-c6-08-e2-e5' : 'rectory1 5G'
+   '84-c6-08-e2-e5' : 'rectory1 5G',
+   '84-c6-3d-eb-1c' : 'rectory2',
+   '84-c6-3d-eb-1d' : 'rectory2 5G'
 }
 
 lastLog = { 'time'   : time.time(),

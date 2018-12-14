@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 
-Titles = { 'latency'             : 'Latency',
-           'corr_blocks_15m'     : 'Corrected Blocks (15 Min)',
-           'uncorr_blocks_15m'   : 'Uncorrectable Blocks (15 Min)',
-           'cum_sec_errs_15m'    : 'Cumaltive Seconds With Errors (15 Min)',
-           'cum_sec_sev_err_15m' : 'Cumulative Seconds With Severe Errors (15 Min)',
-           'dsl_unavail_sec_15m' : 'DSL Unavailable Seconds (15 Min)' }
+Titles = { 'latency'             : 'Latency' }
 
-Units  = { 'latency'             : 'mS',
-           'corr_blocks_15m'     : 'Blocks',
-           'uncorr_blocks_15m'   : 'Blocks',
-           'cum_sec_errs_15m'    : 'Sec',
-           'cum_sec_sev_err_15m' : 'Sec',
-           'dsl_unavail_sec_15m' : 'Sec' }
+#          'corr_blocks_15m'     : 'Corrected Blocks (15 Min)',
+#           'uncorr_blocks_15m'   : 'Uncorrectable Blocks (15 Min)',
+#           'cum_sec_errs_15m'    : 'Cumaltive Seconds With Errors (15 Min)',
+#           'cum_sec_sev_err_15m' : 'Cumulative Seconds With Severe Errors (15 Min)',
+#           'dsl_unavail_sec_15m' : 'DSL Unavailable Seconds (15 Min)' }
+
+Units  = { 'latency'             : 'mS'}
+
+#           'corr_blocks_15m'     : 'Blocks',
+#           'uncorr_blocks_15m'   : 'Blocks',
+#           'cum_sec_errs_15m'    : 'Sec',
+#           'cum_sec_sev_err_15m' : 'Sec',
+#           'dsl_unavail_sec_15m' : 'Sec' }
 
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -43,8 +45,7 @@ def convert_time(rows):
     return(matplotlib.dates.epoch2num([(float(row['utime']) + float(utc_offset)) for row in rows]))
 
 def convert_value(rows):
-    #return([row['value'] if row['value'] < 100.0 else 100.0 for row in rows])
-    return([row['value'] for row in rows])
+    return([row['value'] if row['value'] < 200.0 else 200.0 for row in rows])
 
 # Generic plot function
 def generic_plot ( title, leftLabel, leftData, rightLabel=None, rightData=None ):
@@ -114,11 +115,11 @@ def plot_network(param,period=None,day=None):
 def network(period=None, day=None):
     net = []
     net.append('/wifi/network/plot/latency')
-    net.append('/wifi/network/plot/cum_sec_errs_15m')
-    net.append('/wifi/network/plot/cum_sec_sev_err_15m')
-    net.append('/wifi/network/plot/dsl_unavail_sec_15m')
-    net.append('/wifi/network/plot/corr_blocks_15m')
-    net.append('/wifi/network/plot/uncorr_blocks_15m')
+    #net.append('/wifi/network/plot/cum_sec_errs_15m')
+    #net.append('/wifi/network/plot/cum_sec_sev_err_15m')
+    #net.append('/wifi/network/plot/dsl_unavail_sec_15m')
+    #net.append('/wifi/network/plot/corr_blocks_15m')
+    #net.append('/wifi/network/plot/uncorr_blocks_15m')
 
     return render_template('network.html', net=net)
 
