@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -56,7 +56,7 @@ def print_users():
 
             ssids.append(ent)
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
@@ -89,7 +89,7 @@ def edit_users():
 
             ssids.append(ent)
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
@@ -113,7 +113,7 @@ def add_user():
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("insert into users (user, ssid, password, notes, enable) VALUES ('{}', '{}', '{}', '{}', '{}')".format(user,ssid,pword,MySQLdb.escape_string(notes),enable))
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
@@ -143,7 +143,7 @@ def update_user():
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(query)
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 

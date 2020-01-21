@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # all the imports
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -51,7 +51,7 @@ def print_banned():
 
             ssids.append(ent)
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
@@ -73,7 +73,7 @@ def add_banned():
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("insert into banned (mac, ssid, notes) VALUES ('{}', '{}', '{}')".format(mac,ssid,MySQLdb.escape_string(notes)))
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
@@ -96,7 +96,7 @@ def del_banned():
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(query)
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 

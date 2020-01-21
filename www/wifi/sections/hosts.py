@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # all the imports
 import time
@@ -48,7 +48,7 @@ def print_hosts():
         query += "ap_hosts.ssid, ap_hosts.user, ap_hosts.ap_name "
         query += "from dhcp_hosts left join ap_hosts on ap_hosts.mac = dhcp_hosts.mac "
 
-	if sel != "":
+        if sel != "":
             query += "where " + sel + " "
 
         query += "order by dhcp_hosts.last desc"
@@ -57,7 +57,7 @@ def print_hosts():
 
         items = cursor.fetchall()
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 

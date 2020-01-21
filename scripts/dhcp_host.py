@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -22,7 +22,7 @@ try:
     db = MySQLdb.connect(host='127.0.0.1',user='network',passwd='network',db='network')
     db.autocommit(True)
 
-except Exception, e:
+except Exception as e:
     print('*** Failed to connect to database ({})***'.format(e))
     exit()
 

@@ -1,0 +1,41 @@
+{% extends "wifi_base.html" %}
+{% block title %}Door log For {{ curr_date }}{% endblock %}
+{% block body %}
+
+<table width=90%>
+    <tr><td align=center colspan=9><h1>Door Log For {{ curr_date }}</h1></td></tr>
+<tr>
+    <th align=left>Timestamp</th>
+    <th align=left>Door</th>
+    <th align=left>State</th>
+    <th align=left>Changed</th>
+    <th align=left>&nbsp</th>
+</tr>
+<tr>
+   <td colspan=5><hr></td>
+</tr>
+<tr>
+    <form action="" method=post>
+    <td align=left>{{ form.day }}</td>
+    <td align=left>{{ form.door(size=10) }}</td>
+    <td align=left>{{ form.state(size=10) }}</td>
+    <td align=left>{{ form.changed }}</td>
+    <td align=left>Page: {{ form.page }} {{ form.update }}</td>
+    </form>
+</tr>
+<tr>
+   <td colspan=5><hr></td>
+</tr>
+
+{% for item in items %}
+   <tr>
+      <td><font size=-1>{{ item['timestamp'] }}</font></td>
+      <td><font size=-1>{{ item['door'] }}</font></td>
+      <td><font size=-1>{{ item['state'] }}</font></td>
+      <td><font size=-1>{{ item['changed'] }}</font></td>
+      <td>&nbsp</th>
+   </tr>
+{% endfor %}
+</table>
+{% endblock %}
+

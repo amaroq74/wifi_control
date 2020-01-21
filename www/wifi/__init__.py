@@ -1,14 +1,15 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # all the imports
 from flask import Flask, url_for, request, redirect, render_template, session
 from wtforms import Form, TextField, SubmitField, validators
 
-from sections.users   import user_pages
-from sections.banned  import banned_pages
-from sections.log     import log_pages
-from sections.hosts   import hosts_pages
-from sections.network import network_pages
+from .sections.users   import user_pages
+from .sections.banned  import banned_pages
+from .sections.log     import log_pages
+from .sections.hosts   import hosts_pages
+from .sections.network import network_pages
+from .sections.doors   import doors_pages
 
 # configuration
 SESSION_TYPE = 'memcached'
@@ -23,6 +24,7 @@ app.register_blueprint(banned_pages)
 app.register_blueprint(log_pages)
 app.register_blueprint(hosts_pages)
 app.register_blueprint(network_pages)
+app.register_blueprint(doors_pages)
 app.secret_key = 'F77skFLsjkdsf\\][][)()0#$?KT'
 
 @app.route('/favicon.ico')

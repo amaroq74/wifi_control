@@ -24,7 +24,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib 
 import time
-import StringIO
+import io
 import MySQLdb
 
 # Add relative path
@@ -78,7 +78,7 @@ def generic_plot ( title, leftLabel, leftData, rightLabel=None, rightData=None )
         for r in rightData:
             axesB.plot_date(r['xdata'],r['ydata'],r['line'],label=r['label'])
 
-    output = StringIO.StringIO()
+    output = io.BytesIO()
     canvas.print_png(output)
     response = make_response(output.getvalue())
     response.mimetype = 'image/png'
@@ -98,7 +98,7 @@ def plot_network(param,period=None,day=None):
         cursor.execute(query)
         items = cursor.fetchall()
 
-    except Exception, e:
+    except Exception as e:
         print('*** Failed to connect to database ({})***'.format(e))
         return render_template('error.html', error=str(e))
 
