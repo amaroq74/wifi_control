@@ -5,21 +5,19 @@ import time
 import MySQLdb
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, Blueprint, current_app, jsonify
-from wtforms import Form, TextField, validators, SubmitField, SelectField, BooleanField
+from wtforms import Form, StringField, validators, SubmitField, SelectField, BooleanField
 
 log_pages = Blueprint('log', __name__, url_prefix='/log')
 
 class LogForm(Form):
-    day       = SelectField('day',  choices = ['None'], validators=[validators.Required()])
-    page      = SelectField('page', choices = [(str(i),str(i)) for i in range(1,101)], validators=[validators.Required()])
+    day       = SelectField('day',  choices = ['None'], validators=[validators.DataRequired()])
+    page      = SelectField('page', choices = [(str(i),str(i)) for i in range(1,101)], validators=[validators.DataRequired()])
     update    = SubmitField("update")
-    user      = TextField('user_log.user',[validators.Length(min=0,max=20)])
-    ssid      = TextField('user_log.ssid',[validators.Length(min=0,max=20)])
-    mac       = TextField('user_log.mac',[validators.Length(min=0,max=20)])
-    ap_name   = TextField('user_log.ap_name',[validators.Length(min=0,max=20)])
-    ap_mac    = TextField('user_log.ap_mac',[validators.Length(min=0,max=20)])
-    name      = TextField('dhcp_hosts.name',[validators.Length(min=0,max=20)])
-    duplicate = BooleanField('user_log.duplicate')
+    ssid      = StringField('user_log.ssid',[validators.Length(min=0,max=20)])
+    mac       = StringField('user_log.mac',[validators.Length(min=0,max=20)])
+    ap_name   = StringField('user_log.ap_name',[validators.Length(min=0,max=20)])
+    ap_mac    = StringField('user_log.ap_mac',[validators.Length(min=0,max=20)])
+    name      = StringField('user_log.name',[validators.Length(min=0,max=20)])
 
 @log_pages.route('/', methods=['GET', 'POST'])
 def print_log():
@@ -33,19 +31,17 @@ def print_log():
         curr_date = form.day.data
         sel = "user_log.timestamp >= '%s 00:00:00' and user_log.timestamp <= '%s 23:59:59'" % (form.day.data,form.day.data)
 
-        if not form.duplicate.data: sel += " and user_log.duplicate = '0'"
-
         for f in form:
-            if isinstance(f,TextField) and len(f.data) > 0:
+            if isinstance(f,StringField) and len(f.data) > 0:
                 if f.name == 'mac':
                     sel += " and user_log.mac like '%%%s%%'" % (f.data)
-                elif f.name != 'duplicate':
+                else:
                     sel += " and %s like '%%%s%%'" % (f.name,f.data)
 
         offset = 1000 * (int(form.page.data)-1)
     else:
         curr_date  = time.strftime("%Y-%m-%d",time.localtime())
-        sel    = "user_log.timestamp >= current_date() and user_log.duplicate = '0'"
+        sel    = "user_log.timestamp >= current_date()"
         offset = 0
 
     items = []
@@ -55,9 +51,8 @@ def print_log():
         db.autocommit(True)
         cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
-        query =  "select user_log.timestamp, user_log.user, user_log.ssid, user_log.mac, user_log.ap_mac, user_log.ap_name, dhcp_hosts.name, user_log.duplicate "
-        query += "from user_log left join dhcp_hosts on dhcp_hosts.mac = user_log.mac "
-        query += "where " + sel + " order by user_log.timestamp desc limit %i,%i" % (offset,1000)
+        query =  "select user_log.timestamp, user_log.ssid, user_log.mac, user_log.ap_mac, user_log.ap_name, user_log.name "
+        query += "from user_log where " + sel + " order by user_log.timestamp desc limit %i,%i" % (offset,1000)
 
         cursor.execute(query)
 

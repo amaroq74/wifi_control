@@ -7,12 +7,12 @@
 <tr>
     <th align=left>Last DHCP</th>
     <th align=left>MAC</th>
-    <th align=left>Name</th>
-    <th align=left>Interface</th>
+    <th align=left>DHCP Name</th>
+    <th align=left>Vlan</th>
     <th align=left>Ip</th>
-    <th align=left>User</th>
     <th align=left>SSID</th>
     <th align=left>Access Point</th>
+    <th align=left>WIFI Name</th>
     <th align=left>&nbsp</th>
 </tr>
 <tr>
@@ -22,12 +22,12 @@
     <form action="" method=post>
     <td align=left>&nbsp</td>
     <td align=left>{{ form.mac(size=10) }}</td>
-    <td align=left>{{ form.name(size=10) }}</td>
-    <td align=left>{{ form.interface(size=10) }}</td>
+    <td align=left>{{ form.dhcp_name(size=10) }}</td>
+    <td align=left>{{ form.vlan(size=10) }}</td>
     <td align=left>{{ form.ip(size=10) }}</td>
-    <td align=left>{{ form.user(size=10) }}</td>
     <td align=left>{{ form.ssid(size=10) }}</td>
     <td align=left>{{ form.ap_name(size=10) }}</td>
+    <td align=left>{{ form.wifi_name(size=10) }}</td>
     <td align=left>{{ form.update }}</td>
     </form>
 </tr>
@@ -39,12 +39,12 @@
    <tr>
       <td><font size=-1>{{ item['last'] }}</font></td>
       <td><font size=-1>{{ item['mac'] }}</font></td>
-      <td><font size=-1>{{ item['name'] }}</font></td>
-      <td><font size=-1>{{ item['interface'] }}</font></td>
+      <td><font size=-1>{{ item['dhcp_name'] }}</font></td>
+      <td><font size=-1>{{ item['vlan'] }}</font></td>
       <td><font size=-1>{{ item['ip'] }}</font></td>
-      <td><font size=-1>{{ item['user'] }}</font></td>
       <td><font size=-1>{{ item['ssid'] }}</font></td>
       <td><font size=-1>{{ item['ap_name'] }}</font></td>
+      <td><font size=-1>{{ item['wifi_name'] }}</font></td>
       <td>&nbsp</th>
    </tr>
 {% endfor %}

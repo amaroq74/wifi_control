@@ -26,5 +26,8 @@ cursor.execute(query)
 query = "delete from ap_hosts where last < (now() - interval 60 day)"
 cursor.execute(query)
 
+query = "delete from door_log where timestamp < (now() - interval 60 day)"
+cursor.execute(query)
+
 db.close()
 
